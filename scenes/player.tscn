@@ -1,0 +1,76 @@
+[gd_scene load_steps=11 format=3 uid="uid://drlvqiigtdpxh"]
+
+[ext_resource type="Texture2D" uid="uid://dlys73o1i4nmj" path="res://assets/player/PlayerSheet.png" id="1_e8806"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_dlm0b"]
+radius = 6.0
+height = 28.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y62f7"]
+atlas = ExtResource("1_e8806")
+region = Rect2(0, 0, 96, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ord4c"]
+atlas = ExtResource("1_e8806")
+region = Rect2(96, 0, 96, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5cdo5"]
+atlas = ExtResource("1_e8806")
+region = Rect2(192, 0, 96, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dcqt4"]
+atlas = ExtResource("1_e8806")
+region = Rect2(288, 0, 96, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j0b25"]
+atlas = ExtResource("1_e8806")
+region = Rect2(384, 0, 96, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p6y0j"]
+atlas = ExtResource("1_e8806")
+region = Rect2(480, 0, 96, 89)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_53xin"]
+atlas = ExtResource("1_e8806")
+region = Rect2(576, 0, 96, 89)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_v5cpl"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y62f7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ord4c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5cdo5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dcqt4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j0b25")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p6y0j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_53xin")
+}],
+"loop": true,
+"name": &"idle_right",
+"speed": 10.0
+}]
+
+[node name="Player" type="CharacterBody2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1, -18)
+shape = SubResource("CapsuleShape2D_dlm0b")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(1, -40)
+sprite_frames = SubResource("SpriteFrames_v5cpl")
+animation = &"idle_right"
+frame_progress = 0.747873
