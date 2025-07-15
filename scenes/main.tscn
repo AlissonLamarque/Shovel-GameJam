@@ -8,13 +8,13 @@
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(576, 320)
-zoom = Vector2(2, 2)
+zoom = Vector2(2.5, 2.5)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
-position = Vector2(576, 401)
+position = Vector2(576, 372)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 shape = SubResource("WorldBoundaryShape2D_e0exv")
 
 [node name="Player" parent="." instance=ExtResource("1_ubn8e")]
-position = Vector2(405, 391)
+position = Vector2(416, 364)
