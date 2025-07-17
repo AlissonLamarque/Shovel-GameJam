@@ -7,6 +7,7 @@
 
 [sub_resource type="Animation" id="Animation_0wfyh"]
 length = 0.001
+
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -31,51 +32,31 @@ tracks/1/keys = {
 "update": 1,
 "values": [&"idle"]
 }
-
-[sub_resource type="Animation" id="Animation_o5qli"]
-resource_name = "abertura"
-length = 6.0
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Player:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(300, 364), Vector2(416, 364)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Player/AnimatedSprite2D:animation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [&"walk", &"idle"]
-}
-tracks/2/type = "method"
+tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("Player")
+tracks/2/path = NodePath("Camera2D:zoom")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 6),
-"transitions": PackedFloat32Array(1, 1),
-"values": [{
-"args": [&"control_enabled", false],
-"method": &"set"
-}, {
-"args": [&"control_enabled", true],
-"method": &"set"
-}]
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2.5, 2.5)]
 }
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera2D:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(381, 257)]
+}
+
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_sugp2"]
 _data = {
@@ -87,11 +68,13 @@ _data = {
 script = ExtResource("1_0wfyh")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(576, 320)
+position = Vector2(381, 257)
+scale = Vector2(4, 4)
+anchor_mode = 0
 zoom = Vector2(2.5, 2.5)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
-position = Vector2(576, 364)
+position = Vector2(416, 364)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 shape = SubResource("WorldBoundaryShape2D_e0exv")
