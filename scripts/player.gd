@@ -18,6 +18,8 @@ extends CharacterBody2D
 @export_group("Física")
 @export var gravity_scale: float = 1.0 # Multiplicador para a gravidade padrão do projeto.
 
+var control_enabled = true
+
 # Variável para armazenar a gravidade do projeto.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
@@ -33,6 +35,8 @@ var _time_since_last_input: float = 0.0
 
 
 func _physics_process(delta: float) -> void:
+	if !control_enabled:
+		return
 	# 1. APLICAR GRAVIDADE
 	if not is_on_floor():
 		velocity.y += gravity * gravity_scale * delta
