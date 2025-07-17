@@ -14,11 +14,8 @@ extends CharacterBody2D
 @export var speed_lerp_factor: float = 0.2 
 
 @export_group("Posicionamento na Tela")
-# VALOR ALTERADO: O deslocamento na velocidade zero agora é 0 (posição inicial).
 @export var slow_speed_x_offset: float = 0.0 
-# VALOR ALTERADO: Define o quão para a DIREITA o personagem vai em velocidade máxima.
 @export var fast_speed_x_offset: float = 50.0
-# Fator de suavização para o movimento de posição.
 @export var position_lerp_factor: float = 0.05
 
 # --- Variáveis de Física ---
@@ -37,17 +34,14 @@ var _last_press_time: int = 0
 var _last_key_direction: int = 0
 var _time_since_last_input: float = 0.0
 var _is_sliding: bool = false
-var _initial_x_position: float # LÓGICA ALTERADA
+var _initial_x_position: float
 
 # --- Referências de Nós ---
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 
-var _is_jumping = false
-
-
 func _ready() -> void:
-	# LÓGICA ALTERADA: Armazena a posição inicial do personagem no mundo do jogo.
+	# Armazena a posição inicial do personagem no mundo do jogo.
 	_initial_x_position = global_position.x
 
 
@@ -62,9 +56,11 @@ func _physics_process(delta: float) -> void:
 	# 2. GERENCIAR DESACELERAÇÃO
 	if _is_sliding:
 		_current_speed = max(0, _current_speed - slide_deceleration * delta)
+		# Para de deslizar se a velocidade zerar.
 		if is_equal_approx(_current_speed, 0.0):
 			_is_sliding = false
 	else:
+		# Desaceleração normal da corrida.
 		_time_since_last_input += delta
 		if _time_since_last_input > input_timeout:
 			_current_speed = max(0, _current_speed - constant_deceleration * delta)
@@ -76,7 +72,6 @@ func _physics_process(delta: float) -> void:
 	_update_animation()
 
 	# 5. MOVER O PERSONAGEM
-	# move_and_slide() ainda é necessário para a gravidade e colisões verticais.
 	move_and_slide()
 
 
@@ -99,13 +94,12 @@ func _input(event: InputEvent) -> void:
 	# --- LÓGICA DO PULO ---
 	if event.is_action_pressed("jump") and is_on_floor() and not _is_sliding:
 		velocity.y = jump_velocity
-		_is_jumping = true
 	
 	if event.is_action_released("jump") and velocity.y < 0:
 		velocity.y *= jump_release_multiplier
 		
 	# --- LÓGICA DO DESLIZE ---
-	if event.is_action_pressed("slide") and is_on_floor() and _current_speed > 0:
+	if event.is_action("slide") and is_on_floor() and _current_speed > 0:
 		_is_sliding = true
 	
 	if event.is_action_released("slide"):
@@ -133,7 +127,7 @@ func _process_running_input(current_direction: int) -> void:
 
 
 func _update_horizontal_position() -> void:
-	# LÓGICA ALTERADA: Mapeia a velocidade para um deslocamento relativo à posição inicial do personagem.
+	# Mapeia a velocidade para um deslocamento relativo à posição inicial do personagem.
 	var target_x = remap(_current_speed, 0, max_speed, _initial_x_position + slow_speed_x_offset, _initial_x_position + fast_speed_x_offset)
 	
 	# Interpola suavemente a posição atual do personagem para a posição alvo.
@@ -155,6 +149,8 @@ func _update_animation() -> void:
 		else:
 			animated_sprite.play("idle")
 	else:
-		if _is_jumping:
-			_is_jumping = false
-			animated_sprite.play("jump")
+		# LÓGICA ALTERADA: Verifica a velocidade vertical para a animação no ar.
+		if velocity.y < 0:
+			animated_sprite.play("jumping")
+		else:
+			animated_sprite.play("falling")
