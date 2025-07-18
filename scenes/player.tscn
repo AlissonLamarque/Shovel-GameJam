@@ -1,12 +1,8 @@
-[gd_scene load_steps=67 format=3 uid="uid://drlvqiigtdpxh"]
+[gd_scene load_steps=68 format=3 uid="uid://drlvqiigtdpxh"]
 
 [ext_resource type="Texture2D" uid="uid://dlys73o1i4nmj" path="res://assets/player/PlayerSheet.png" id="1_e8806"]
 [ext_resource type="Script" uid="uid://d2hxg72woifpq" path="res://scripts/player.gd" id="1_ndjec"]
 [ext_resource type="PackedScene" uid="uid://dtduusdoxolxw" path="res://scenes/ripple.tscn" id="2_qhqgy"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_uvoli"]
-atlas = ExtResource("1_e8806")
-region = Rect2(0, 588, 96, 84)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_uvoli"]
 atlas = ExtResource("1_e8806")
@@ -506,11 +502,9 @@ ripple_scene = ExtResource("2_qhqgy")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(1, -42)
 sprite_frames = SubResource("SpriteFrames_v5cpl")
-
 animation = &"walk"
 frame = 2
 frame_progress = 0.555554
-
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -19)
