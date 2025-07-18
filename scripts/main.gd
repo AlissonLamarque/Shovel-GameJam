@@ -2,13 +2,14 @@ extends Node
 
 # Pré-carregamento das cenas que a main irá gerenciar
 @export var game_scene: PackedScene
+@export var menu_scene: PackedScene
 
 # Referência a cena que está atualmente na tela
 var current_scene: Node
 
 func _ready():
-	# Assim que o jogo aberto coloca a cena do jogo na tela
-	change_scene(game_scene)
+	# Assim que o jogo aberto coloca a cena do menu principal na tela
+	change_scene(menu_scene)
 
 func change_scene(scene_to_load: PackedScene):
 	# 1. LIMPEZA: Remove a cena atual da memória, se houver uma.

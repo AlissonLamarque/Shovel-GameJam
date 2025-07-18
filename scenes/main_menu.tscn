@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3 uid="uid://dculup2ct6wmx"]
+
+[ext_resource type="Script" uid="uid://x0gtst51qdcl" path="res://scripts/main_menu.gd" id="1_l6cm7"]
+
+[node name="Main_Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_l6cm7")
+
+[node name="Button_Container" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Start" type="Button" parent="Button_Container"]
+layout_mode = 2
+text = "Start"
+
+[node name="Options" type="Button" parent="Button_Container"]
+layout_mode = 2
+text = "Options"
+
+[node name="Quit" type="Button" parent="Button_Container"]
+layout_mode = 2
+text = "Quit"
