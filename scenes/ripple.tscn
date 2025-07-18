@@ -24,9 +24,11 @@ scale_curve = SubResource("CurveTexture_6ss4j")
 alpha_curve = SubResource("CurveTexture_ljlil")
 
 [node name="RippleInstance" type="GPUParticles2D"]
+emitting = false
 amount = 1
 texture = ExtResource("1_nd7wn")
 lifetime = 1.5
+one_shot = true
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_8xkuy")
 script = ExtResource("2_soc2n")
