@@ -20,7 +20,7 @@ position = Vector2(0, 200)
 shape = SubResource("WorldBoundaryShape2D_e0exv")
 
 [node name="Player" parent="." instance=ExtResource("2_lnu2h")]
-position = Vector2(100, 200)
+position = Vector2(80, 200)
 
 [node name="AnimatedSprite2D" parent="Player" index="0"]
 animation = &"idle"
