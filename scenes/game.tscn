@@ -9,19 +9,18 @@
 script = ExtResource("1_yqjtg")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(381, 257)
 scale = Vector2(4, 4)
 anchor_mode = 0
 zoom = Vector2(2.5, 2.5)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
-position = Vector2(416, 364)
+position = Vector2(0, 200)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 shape = SubResource("WorldBoundaryShape2D_e0exv")
 
 [node name="Player" parent="." instance=ExtResource("2_lnu2h")]
-position = Vector2(416, 364)
+position = Vector2(100, 200)
 
 [node name="AnimatedSprite2D" parent="Player" index="0"]
 animation = &"idle"
