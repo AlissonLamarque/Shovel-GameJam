@@ -1,9 +1,36 @@
 [gd_scene load_steps=7 format=3 uid="uid://cteme15mj75c1"]
 
-[ext_resource type="Script" uid="uid://cggny5uorwjty" path="res://scripts/main.gd" id="1_0wfyh"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_0wfyh"]
 [ext_resource type="PackedScene" uid="uid://drlvqiigtdpxh" path="res://scenes/player.tscn" id="1_ubn8e"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_e0exv"]
+
+[sub_resource type="Animation" id="Animation_0wfyh"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Player:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(416, 364)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Player/AnimatedSprite2D:animation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"idle"]
+}
 
 [sub_resource type="Animation" id="Animation_o5qli"]
 resource_name = "abertura"
@@ -50,33 +77,6 @@ tracks/2/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_0wfyh"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Player:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(416, 364)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Player/AnimatedSprite2D:animation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"idle"]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_sugp2"]
 _data = {
 &"RESET": SubResource("Animation_0wfyh"),
@@ -100,6 +100,8 @@ shape = SubResource("WorldBoundaryShape2D_e0exv")
 position = Vector2(416, 364)
 
 [node name="AnimatedSprite2D" parent="Player" index="0"]
+animation = &"idle"
+frame = 0
 frame_progress = 0.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
