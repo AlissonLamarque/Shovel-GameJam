@@ -48,9 +48,11 @@ var _initial_x_position: float
 
 # --- Referências de Nós ---
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
+
 @onready var step_timer: Timer = $StepTimer
 # NOVO: Timer para o rastro de ondulações do deslize.
 @onready var slide_ripple_timer: Timer = $SlideRippleTimer
+
 
 
 func _ready() -> void:
@@ -69,10 +71,12 @@ func _physics_process(delta: float) -> void:
 	# 2. GERENCIAR DESACELERAÇÃO
 	if _is_sliding:
 		_current_speed = max(0, _current_speed - slide_deceleration * delta)
+		# Para de deslizar se a velocidade zerar.
 		if is_equal_approx(_current_speed, 0.0):
 			_is_sliding = false
 			slide_ripple_timer.stop() # Para o rastro se a velocidade zerar.
 	else:
+		# Desaceleração normal da corrida.
 		_time_since_last_input += delta
 		if _time_since_last_input > input_timeout:
 			_current_speed = max(0, _current_speed - constant_deceleration * delta)
@@ -114,14 +118,16 @@ func _input(event: InputEvent) -> void:
 	# --- LÓGICA DO PULO ---
 	if event.is_action_pressed("jump") and is_on_floor() and not _is_sliding:
 		velocity.y = jump_velocity
+
 		# LÓGICA ALTERADA: Cria uma ondulação no momento do pulo.
 		_spawn_ripple()
+
 	
 	if event.is_action_released("jump") and velocity.y < 0:
 		velocity.y *= jump_release_multiplier
 		
 	# --- LÓGICA DO DESLIZE ---
-	if event.is_action_pressed("slide") and is_on_floor() and _current_speed > 0:
+	if event.is_action("slide") and is_on_floor() and _current_speed > 0:
 		_is_sliding = true
 		# NOVO: Inicia o timer para o rastro de ondulações do deslize.
 		slide_ripple_timer.wait_time = slide_ripple_interval
@@ -200,11 +206,12 @@ func _update_animation() -> void:
 				step_timer.wait_time = idle_ripple_interval
 				step_timer.start()
 	else:
-		# Animações no ar com velocidade normal
+  
 		if velocity.y < 0:
 			animated_sprite.play("jumping")
 		else:
 			animated_sprite.play("falling")
+
 		animated_sprite.speed_scale = 1.0
 		step_timer.stop()
 
