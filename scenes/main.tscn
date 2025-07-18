@@ -7,7 +7,10 @@
 
 [sub_resource type="Animation" id="Animation_0wfyh"]
 length = 0.001
+<<<<<<< HEAD
+=======
 
+>>>>>>> a188f5fb114f997bd0709bbff65d114f74bf2862
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -32,6 +35,54 @@ tracks/1/keys = {
 "update": 1,
 "values": [&"idle"]
 }
+<<<<<<< HEAD
+
+[sub_resource type="Animation" id="Animation_o5qli"]
+resource_name = "abertura"
+length = 6.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Player:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(300, 364), Vector2(416, 364)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Player/AnimatedSprite2D:animation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [&"walk", &"idle"]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Player")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 6),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [&"control_enabled", false],
+"method": &"set"
+}, {
+"args": [&"control_enabled", true],
+"method": &"set"
+}]
+}
+
+=======
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
@@ -58,6 +109,7 @@ tracks/3/keys = {
 }
 
 
+>>>>>>> a188f5fb114f997bd0709bbff65d114f74bf2862
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_sugp2"]
 _data = {
 &"RESET": SubResource("Animation_0wfyh"),
@@ -84,6 +136,11 @@ position = Vector2(416, 364)
 
 [node name="AnimatedSprite2D" parent="Player" index="0"]
 animation = &"idle"
+<<<<<<< HEAD
+frame = 0
+frame_progress = 0.0
+=======
+>>>>>>> a188f5fb114f997bd0709bbff65d114f74bf2862
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
