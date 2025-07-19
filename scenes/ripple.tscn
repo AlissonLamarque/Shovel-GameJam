@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://dtduusdoxolxw"]
 
 [ext_resource type="Texture2D" uid="uid://byptl44ehpuo1" path="res://assets/player/ripple.png" id="1_nd7wn"]
-[ext_resource type="Script" uid="uid://bxby0u4oyytec" path="res://scripts/ripple.gd" id="2_soc2n"]
+[ext_resource type="Script" path="res://scripts/ripple.gd" id="2_soc2n"]
 
 [sub_resource type="Curve" id="Curve_soc2n"]
 _data = [Vector2(0, 0.707865), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
