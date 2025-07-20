@@ -25,7 +25,6 @@ extends CharacterBody2D
 @export_group("Efeitos Visuais")
 @export var ripple_scene: PackedScene
 @export var idle_ripple_interval: float = 2.5 # Intervalo da ondulação quando parado
-# NOVO: Intervalo para o rastro de ondulações durante o deslize.
 @export var slide_ripple_interval: float = 0.05
 
 # --- Variáveis de Física ---
@@ -34,6 +33,8 @@ extends CharacterBody2D
 @export var jump_velocity: float = -400.0
 @export var jump_release_multiplier: float = 0.5
 @export var slide_deceleration: float = 250.0 # Desaceleração rápida enquanto desliza.
+# NOVO: Camada de colisão a ser usada durante o deslize.
+@export_flags_2d_physics var slide_collision_layer: int
 
 var control_enabled = true
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
@@ -45,12 +46,12 @@ var _last_key_direction: int = 0
 var _time_since_last_input: float = 0.0
 var _is_sliding: bool = false
 var _initial_x_position: float
+# NOVO: Variável para armazenar a camada de colisão original.
+var _original_collision_layer: int
 
 # --- Referências de Nós ---
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
-
 @onready var step_timer: Timer = $StepTimer
-# NOVO: Timer para o rastro de ondulações do deslize.
 @onready var slide_ripple_timer: Timer = $SlideRippleTimer
 
 signal game_over
@@ -58,6 +59,8 @@ signal game_over
 func _ready() -> void:
 	# Armazena a posição inicial do personagem no mundo do jogo.
 	_initial_x_position = global_position.x
+	# NOVO: Armazena a camada de colisão original do corpo.
+	_original_collision_layer = self.collision_layer
 
 
 func _physics_process(delta: float) -> void:
@@ -71,12 +74,11 @@ func _physics_process(delta: float) -> void:
 	# 2. GERENCIAR DESACELERAÇÃO
 	if _is_sliding:
 		_current_speed = max(0, _current_speed - slide_deceleration * delta)
-		# Para de deslizar se a velocidade zerar.
 		if is_equal_approx(_current_speed, 0.0):
 			_is_sliding = false
 			slide_ripple_timer.stop() # Para o rastro se a velocidade zerar.
+			self.collision_layer = _original_collision_layer # Reativa a colisão
 	else:
-		# Desaceleração normal da corrida.
 		_time_since_last_input += delta
 		if _time_since_last_input > input_timeout:
 			_current_speed = max(0, _current_speed - constant_deceleration * delta)
@@ -93,8 +95,7 @@ func _physics_process(delta: float) -> void:
 	# 5. MOVER O PERSONAGEM
 	move_and_slide()
 
-	# 6. LÓGICA DE ATERRISSAGEM (NOVO)
-	# Se não estava no chão antes, mas está agora, significa que acabou de aterrissar.
+	# 6. LÓGICA DE ATERRISSAGEM
 	if not was_on_floor and is_on_floor():
 		_spawn_ripple()
 
@@ -118,26 +119,24 @@ func _input(event: InputEvent) -> void:
 	# --- LÓGICA DO PULO ---
 	if event.is_action_pressed("jump") and is_on_floor() and not _is_sliding:
 		velocity.y = jump_velocity
-
-		# LÓGICA ALTERADA: Cria uma ondulação no momento do pulo.
 		_spawn_ripple()
-
 	
 	if event.is_action_released("jump") and velocity.y < 0:
 		velocity.y *= jump_release_multiplier
 		
 	# --- LÓGICA DO DESLIZE ---
-	if event.is_action("slide") and is_on_floor() and _current_speed > 0:
+	if event.is_action_pressed("slide") and is_on_floor() and _current_speed > 0:
 		_is_sliding = true
-		# NOVO: Inicia o timer para o rastro de ondulações do deslize.
+		self.collision_layer = slide_collision_layer # Altera a camada de colisão
 		slide_ripple_timer.wait_time = slide_ripple_interval
 		slide_ripple_timer.start()
 		_spawn_ripple() # Cria a primeira ondulação do deslize imediatamente.
 	
 	if event.is_action_released("slide"):
-		_is_sliding = false
-		# NOVO: Para o rastro de ondulações ao soltar o botão.
-		slide_ripple_timer.stop()
+		if _is_sliding: # Só executa se estava realmente deslizando
+			_is_sliding = false
+			self.collision_layer = _original_collision_layer # Restaura a camada de colisão
+			slide_ripple_timer.stop()
 
 
 func _process_running_input(current_direction: int) -> void:
@@ -177,7 +176,6 @@ func _update_animation() -> void:
 
 	if is_on_floor():
 		if _current_speed > 10.0:
-			# Escolhe a animação correta baseada na velocidade
 			if _current_speed >= 400:
 				animated_sprite.play("run_fast")
 			elif _current_speed >= 200:
@@ -185,37 +183,29 @@ func _update_animation() -> void:
 			else:
 				animated_sprite.play("walk")
 			
-			# Mapeia a velocidade do personagem para a velocidade da animação
 			var animation_speed = remap(_current_speed, initial_speed, max_speed, min_animation_speed, max_animation_speed)
 			animated_sprite.speed_scale = clamp(animation_speed, min_animation_speed, max_animation_speed)
 
-			# Controla o timer dos passos para o efeito de ondulação
 			if step_timer.is_stopped():
-				# Dispara a primeira ondulação imediatamente ao começar a andar.
 				_spawn_ripple()
 				
 				var step_duration = 0.4 / animated_sprite.speed_scale
 				step_timer.wait_time = clamp(step_duration, 0.1, 0.8)
 				step_timer.start()
 		else:
-			# Animação de parado com velocidade normal
 			animated_sprite.play("idle")
 			animated_sprite.speed_scale = 1.0
-			# Timer continua rodando lentamente quando parado.
 			if step_timer.is_stopped():
 				step_timer.wait_time = idle_ripple_interval
 				step_timer.start()
 	else:
-  
 		if velocity.y < 0:
 			animated_sprite.play("jumping")
 		else:
 			animated_sprite.play("falling")
-
 		animated_sprite.speed_scale = 1.0
 		step_timer.stop()
 
-# Função para criar a ondulação foi separada para ser reutilizada.
 func _spawn_ripple():
 	if ripple_scene:
 		var ripple = ripple_scene.instantiate()
@@ -223,11 +213,12 @@ func _spawn_ripple():
 		
 		var ripple_position = global_position
 		
-		# Interpola o deslocamento da ondulação com base na velocidade.
 		var x_offset = remap(_current_speed, 0, max_speed, 0.0, 15.0)
 		ripple_position.x += x_offset
 			
 		ripple.global_position = ripple_position
+		# A linha abaixo pode causar um erro se o script da ondulação não tiver a variável.
+		# Se você não precisar que a ondulação se mova, pode comentar ou remover.
 		ripple.player_speed = _current_speed
 
 func die():
@@ -239,9 +230,7 @@ func die():
 	game_over.emit()
 
 func _on_step_timer_timeout():
-	# O timer agora chama a mesma função de criação de ondulação.
 	_spawn_ripple()
 
-# NOVO: Função chamada pelo novo Timer para o rastro do deslize.
 func _on_slide_ripple_timer_timeout():
 	_spawn_ripple()
