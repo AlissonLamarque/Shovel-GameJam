@@ -16,7 +16,7 @@ func _ready():
 	
 	# Conecta os botões a suas respectivas funções
 	$Button_Container/Start.pressed.connect(_on_start_button_pressed)
-	$Button_Container/Options.pressed.connect(_on_options_button_pressed)
+	$Button_Container/Credits.pressed.connect(_on_credits_button_pressed)
 	$Button_Container/Quit.pressed.connect(_on_quit_button_pressed)
 	
 	# Inicia a cutscene
@@ -26,7 +26,7 @@ func _on_start_button_pressed():
 	# Emite o sinal para a main que o jogo deve começar
 	game_started.emit()
 
-func _on_options_button_pressed():
+func _on_credits_button_pressed():
 	# Emite o sinal para a main que as opções do menu foram solicitadas
 	options_requested.emit()
 
