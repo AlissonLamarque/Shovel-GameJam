@@ -144,6 +144,8 @@ shape = SubResource("WorldBoundaryShape2D_8oc0i")
 
 [node name="Player" parent="." instance=ExtResource("1_8oc0i")]
 position = Vector2(-50, 200)
+collision_layer = 1
+slide_collision_layer = 0
 
 [node name="AnimatedSprite2D" parent="Player" index="0"]
 frame = 0
