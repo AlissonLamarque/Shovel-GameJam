@@ -37,16 +37,19 @@ alignment = 1
 [node name="Start" type="Button" parent="Button_Container"]
 layout_mode = 2
 theme_type_variation = &"FlatButton"
+disabled = true
 text = "Start"
 
 [node name="Options" type="Button" parent="Button_Container"]
 layout_mode = 2
 theme_type_variation = &"FlatButton"
+disabled = true
 text = "Options"
 
 [node name="Quit" type="Button" parent="Button_Container"]
 layout_mode = 2
 theme_type_variation = &"FlatButton"
+disabled = true
 text = "Quit"
 
 [node name="Cutscene_Opening" parent="." instance=ExtResource("2_ekxnf")]
