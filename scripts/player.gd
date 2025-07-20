@@ -51,8 +51,12 @@ var _original_collision_layer: int
 
 # --- Referências de Nós ---
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var audio_stream_player_2d: AudioStreamPlayer2D = $AudioStreamPlayer2D
 @onready var step_timer: Timer = $StepTimer
 @onready var slide_ripple_timer: Timer = $SlideRippleTimer
+@onready var sound_timer: Timer = $SoundTimer
+
+var rng = RandomNumberGenerator.new()
 
 signal game_over
 
@@ -192,6 +196,14 @@ func _update_animation() -> void:
 				var step_duration = 0.4 / animated_sprite.speed_scale
 				step_timer.wait_time = clamp(step_duration, 0.1, 0.8)
 				step_timer.start()
+				
+			if sound_timer.is_stopped():
+				audio_stream_player_2d.pitch_scale = rng.randf_range(0.9, 1.1)
+				audio_stream_player_2d.play()
+				
+				var step_duration = 0.4 / animated_sprite.speed_scale
+				sound_timer.wait_time = clamp(step_duration, 0.1, 0.8)
+				sound_timer.start()
 		else:
 			animated_sprite.play("idle")
 			animated_sprite.speed_scale = 1.0
