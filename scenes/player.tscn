@@ -495,7 +495,8 @@ animations = [{
 radius = 5.0
 height = 38.0
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" groups=["player"]]
+collision_mask = 2
 script = ExtResource("1_ndjec")
 ripple_scene = ExtResource("2_qhqgy")
 
