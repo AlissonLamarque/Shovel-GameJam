@@ -3,6 +3,7 @@ extends Node
 # Pré-carregamento das cenas que a main irá gerenciar
 @export var game_scene: PackedScene
 @export var menu_scene: PackedScene
+@export var credits_scene: PackedScene
 @export var game_over_scene: PackedScene
 
 # Referência a cena que está atualmente na tela
@@ -34,7 +35,12 @@ func change_scene(scene_to_load: PackedScene):
 		# E conectamos os sinais na INSTÂNCIA, não na cena pré-carregada.
 		new_scene_instance.restart_requested.connect(_on_restart_requested)
 		new_scene_instance.main_menu_requested.connect(_on_main_menu_requested)
-
+	
+	if new_scene_instance.has_signal("credits_requested"):
+		new_scene_instance.credits_requested.connect(_on_credits_requested)
+	if new_scene_instance.has_signal("menu_requested"):
+		new_scene_instance.menu_requested.connect(_on_main_menu_requested)
+	
 	# 4. ADIÇÃO: Adiciona a nova cena como FILHA do nó Main.
 	add_child(new_scene_instance)
 	# 5. ATUALIZAÇÃO: Atualiza nossa variável de referência para a nova cena.
@@ -44,13 +50,13 @@ func _on_game_started():
 	change_scene(game_scene)
 
 func _on_game_over():
-	print("Sinal gameover recebido")
 	change_scene(game_over_scene)
 
 func _on_restart_requested():
-	print("Sinal 'retry_requested' recebido! Reiniciando o jogo...")
 	change_scene(game_scene)
 
 func _on_main_menu_requested():
-	print("Sinal 'main_menu_requested' recebido! Voltando ao menu...")
 	change_scene(menu_scene)
+
+func _on_credits_requested():
+	change_scene(credits_scene)
