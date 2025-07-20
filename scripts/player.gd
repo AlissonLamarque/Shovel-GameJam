@@ -53,7 +53,7 @@ var _initial_x_position: float
 # NOVO: Timer para o rastro de ondulações do deslize.
 @onready var slide_ripple_timer: Timer = $SlideRippleTimer
 
-
+signal game_over
 
 func _ready() -> void:
 	# Armazena a posição inicial do personagem no mundo do jogo.
@@ -229,6 +229,14 @@ func _spawn_ripple():
 			
 		ripple.global_position = ripple_position
 		ripple.player_speed = _current_speed
+
+func die():
+	control_enabled = false
+	
+	_current_speed = 0.0
+	velocity = Vector2.ZERO
+	print("Emitindo gameover")
+	game_over.emit()
 
 func _on_step_timer_timeout():
 	# O timer agora chama a mesma função de criação de ondulação.

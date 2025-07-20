@@ -15,8 +15,9 @@ script = ExtResource("1_l6cm7")
 [node name="Title" type="Label" parent="."]
 layout_mode = 0
 offset_left = 170.0
+offset_top = 10.0
 offset_right = 291.0
-offset_bottom = 23.0
+offset_bottom = 40.0
 text = "QuemLerEhGay"
 
 [node name="Button_Container" type="VBoxContainer" parent="."]
@@ -40,11 +41,12 @@ theme_type_variation = &"FlatButton"
 disabled = true
 text = "Start"
 
-[node name="Options" type="Button" parent="Button_Container"]
+[node name="Credits" type="Button" parent="Button_Container"]
 layout_mode = 2
 theme_type_variation = &"FlatButton"
 disabled = true
-text = "Options"
+text = "Credits
+"
 
 [node name="Quit" type="Button" parent="Button_Container"]
 layout_mode = 2
