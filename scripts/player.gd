@@ -311,7 +311,7 @@ func _fade_in(player: AudioStreamPlayer):
 
 	if player.playing and player.volume_db > -1.0:
 		return
-		
+	
 	var tween = create_tween().set_parallel(false)
 	player.volume_db = -80.0
 	player.play()
