@@ -502,6 +502,7 @@ radius = 5.0
 height = 38.0
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("soundtrack_players") groups=["player"]]
+z_index = -1
 collision_layer = 3
 collision_mask = 2
 script = ExtResource("1_ndjec")
