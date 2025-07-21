@@ -35,7 +35,10 @@ func _on_spawn_timer_timeout():
 		
 	var obstaculo_escolhido = cenas_obstaculos.pick_random()
 	var novo_obstaculo = obstaculo_escolhido.instantiate()
-	 
-	novo_obstaculo.global_position = Vector2(spawn_position.global_position.x, 200)
+	var list = [195, 160]
+	var height
+	height = list.pick_random()
+	
+	novo_obstaculo.global_position = Vector2(spawn_position.global_position.x, height)
 
 	add_child(novo_obstaculo)
