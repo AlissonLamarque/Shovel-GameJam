@@ -27,13 +27,19 @@ extends CharacterBody2D
 @export var idle_ripple_interval: float = 2.5 # Intervalo da ondulação quando parado
 @export var slide_ripple_interval: float = 0.05
 
+# --- Configurações da Trilha Sonora ---
+@export_group("Configurações da Trilha Sonora")
+@export var soundtrack_players: Array[AudioStreamPlayer]
+@export var walk_loop_threshold: int = 3 # Repetições para adicionar camada ao andar
+@export var run_loop_threshold: int = 1   # Repetições para adicionar camada ao correr
+@export var music_fade_duration: float = 2.0 # Duração do fade in/out da música
+
 # --- Variáveis de Física ---
 @export_group("Física, Pulo e Deslize")
 @export var gravity_scale: float = 1.0
 @export var jump_velocity: float = -400.0
 @export var jump_release_multiplier: float = 0.5
 @export var slide_deceleration: float = 250.0 # Desaceleração rápida enquanto desliza.
-# NOVO: Camada de colisão a ser usada durante o deslize.
 @export_flags_2d_physics var slide_collision_layer: int
 
 var control_enabled = true
@@ -46,25 +52,46 @@ var _last_key_direction: int = 0
 var _time_since_last_input: float = 0.0
 var _is_sliding: bool = false
 var _initial_x_position: float
-# NOVO: Variável para armazenar a camada de colisão original.
 var _original_collision_layer: int
+
+# --- Variáveis de estado da música ---
+enum SpeedTier { STOPPED, WALKING, RUNNING }
+var _current_speed_tier: SpeedTier = SpeedTier.STOPPED
+var _loop_counters: Array[int] = []
+var _active_music_layers: int = 0
+var _soundtrack_timers: Array[Timer] = []
 
 # --- Referências de Nós ---
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
-@onready var audio_stream_player_2d: AudioStreamPlayer2D = $AudioStreamPlayer2D
 @onready var step_timer: Timer = $StepTimer
 @onready var slide_ripple_timer: Timer = $SlideRippleTimer
+@onready var audio_stream_player_2d: AudioStreamPlayer2D = $AudioStreamPlayer2D
 @onready var sound_timer: Timer = $SoundTimer
 
 var rng = RandomNumberGenerator.new()
 
-signal game_over
 
 func _ready() -> void:
 	# Armazena a posição inicial do personagem no mundo do jogo.
 	_initial_x_position = global_position.x
-	# NOVO: Armazena a camada de colisão original do corpo.
+	# Armazena a camada de colisão original do corpo.
 	_original_collision_layer = self.collision_layer
+	
+	# Prepara o sistema de música com Timers em vez de sinais 'finished'.
+	_loop_counters.resize(soundtrack_players.size())
+	_loop_counters.fill(0)
+	for i in soundtrack_players.size():
+		var player = soundtrack_players[i]
+		if player.stream:
+			var timer = Timer.new()
+			timer.name = "SoundtrackTimer_" + str(i)
+			timer.wait_time = player.stream.get_length()
+			timer.one_shot = false # O timer irá repetir
+			timer.timeout.connect(_on_soundtrack_loop_finished.bind(i))
+			_soundtrack_timers.append(timer)
+			add_child(timer)
+		else:
+			push_warning("Soundtrack player at index %d has no audio stream." % i)
 
 
 func _physics_process(delta: float) -> void:
@@ -89,6 +116,9 @@ func _physics_process(delta: float) -> void:
 
 	# 3. ATUALIZAR POSIÇÃO HORIZONTAL SUAVEMENTE
 	_update_horizontal_position()
+	
+	# Atualiza a lógica da música a cada quadro
+	_update_music_system()
 
 	# 4. ATUALIZAR ANIMAÇÕES
 	_update_animation()
@@ -196,7 +226,8 @@ func _update_animation() -> void:
 				var step_duration = 0.4 / animated_sprite.speed_scale
 				step_timer.wait_time = clamp(step_duration, 0.1, 0.8)
 				step_timer.start()
-				
+			
+			# LÓGICA RESTAURADA: Som dos passos
 			if sound_timer.is_stopped():
 				audio_stream_player_2d.pitch_scale = rng.randf_range(0.9, 1.1)
 				audio_stream_player_2d.play()
@@ -218,6 +249,91 @@ func _update_animation() -> void:
 		animated_sprite.speed_scale = 1.0
 		step_timer.stop()
 
+# --- Funções do Sistema de Música ---
+
+func _update_music_system():
+	var new_speed_tier = _get_current_speed_tier()
+	
+	if new_speed_tier == _current_speed_tier:
+		return
+
+	match new_speed_tier:
+		SpeedTier.STOPPED:
+			for i in range(1, soundtrack_players.size()):
+				_fade_out(soundtrack_players[i])
+			_active_music_layers = 1
+		
+		SpeedTier.WALKING:
+			if _current_speed_tier == SpeedTier.STOPPED:
+				_fade_in(soundtrack_players[0])
+				_active_music_layers = 1
+			else: # Veio de RUNNING
+				for i in range(2, soundtrack_players.size()):
+					_fade_out(soundtrack_players[i])
+				_active_music_layers = 2
+		
+		SpeedTier.RUNNING:
+			if not soundtrack_players[0].playing:
+				_fade_in(soundtrack_players[0])
+				_active_music_layers = 1
+
+	_current_speed_tier = new_speed_tier
+	_loop_counters.fill(0)
+
+func _get_current_speed_tier() -> SpeedTier:
+	if _current_speed >= 200:
+		return SpeedTier.RUNNING
+	elif _current_speed > 10.0:
+		return SpeedTier.WALKING
+	else:
+		return SpeedTier.STOPPED
+
+# LÓGICA ALTERADA: Esta função agora é chamada pelo timeout do Timer.
+func _on_soundtrack_loop_finished(layer_index: int):
+	if layer_index >= _active_music_layers:
+		return
+
+	_loop_counters[layer_index] += 1
+	
+	var threshold = run_loop_threshold if _current_speed_tier == SpeedTier.RUNNING else walk_loop_threshold
+	
+	if _loop_counters[layer_index] >= threshold:
+		var next_layer_index = layer_index + 1
+		if next_layer_index < soundtrack_players.size():
+			if not soundtrack_players[next_layer_index].playing:
+				_fade_in(soundtrack_players[next_layer_index])
+				_active_music_layers = next_layer_index + 1
+				_loop_counters[layer_index] = 0
+
+func _fade_in(player: AudioStreamPlayer):
+	var index = soundtrack_players.find(player)
+	if index == -1: return
+
+	if player.playing and player.volume_db > -1.0:
+		return
+		
+	var tween = create_tween().set_parallel(false)
+	player.volume_db = -80.0
+	player.play()
+	_soundtrack_timers[index].start() # LÓGICA ALTERADA
+	tween.tween_property(player, "volume_db", 0.0, music_fade_duration)
+
+func _fade_out(player: AudioStreamPlayer):
+	var index = soundtrack_players.find(player)
+	if index == -1: return
+
+	if not player.playing:
+		return
+
+	_soundtrack_timers[index].stop() # LÓGICA ALTERADA
+	var tween = create_tween().set_parallel(false)
+	tween.tween_property(player, "volume_db", -80.0, music_fade_duration)
+	await tween.finished
+	if player:
+		player.stop()
+
+# --- Funções de Efeitos Visuais ---
+
 func _spawn_ripple():
 	if ripple_scene:
 		var ripple = ripple_scene.instantiate()
@@ -229,17 +345,7 @@ func _spawn_ripple():
 		ripple_position.x += x_offset
 			
 		ripple.global_position = ripple_position
-		# A linha abaixo pode causar um erro se o script da ondulação não tiver a variável.
-		# Se você não precisar que a ondulação se mova, pode comentar ou remover.
 		ripple.player_speed = _current_speed
-
-func die():
-	control_enabled = false
-	
-	_current_speed = 0.0
-	velocity = Vector2.ZERO
-	print("Emitindo gameover")
-	game_over.emit()
 
 func _on_step_timer_timeout():
 	_spawn_ripple()
