@@ -506,9 +506,13 @@ z_index = -1
 collision_layer = 3
 collision_mask = 2
 script = ExtResource("1_ndjec")
+constant_deceleration = 75.0
+input_timeout = 0.41
 ripple_scene = ExtResource("2_qhqgy")
 soundtrack_players = [NodePath("base_beat"), NodePath("entrada_melodia"), NodePath("base_piano"), NodePath("melodia_piano"), NodePath("melodia_voz")]
-slide_collision_layer = 3
+jump_velocity = -300.0
+slide_deceleration = 80.0
+slide_sprite_y_offset = 19.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(1, -42)

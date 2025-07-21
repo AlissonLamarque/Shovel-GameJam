@@ -8,7 +8,7 @@ var player_speed: float = 0.0
 
 # Você pode ajustar este valor para mudar o quão rápido a ondulação se move para trás.
 # 1.0 = mesma velocidade do cenário (se houvesse um).
-var scroll_multiplier: float = 0.8
+var scroll_multiplier: float = 1
 
 func _ready():
 	# Inicia a emissão assim que a cena é criada.

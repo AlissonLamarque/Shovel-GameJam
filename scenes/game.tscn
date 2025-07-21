@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://drlvqiigtdpxh" path="res://scenes/player.tscn" id="2_lnu2h"]
 [ext_resource type="PackedScene" uid="uid://bse1uw3flo2hj" path="res://scenes/obst_manager.tscn" id="3_lnu2h"]
 [ext_resource type="PackedScene" uid="uid://cv0sqmc3g7w2c" path="res://scenes/obst_jump.tscn" id="4_lbhrr"]
-[ext_resource type="Script" uid="uid://dbeofrovroaer" path="res://scripts/label.gd" id="5_iywne"]
+[ext_resource type="Script" path="res://scripts/label.gd" id="5_iywne"]
 [ext_resource type="FontFile" uid="uid://do4uum7hqbefd" path="res://assets/fonts/DeadRevolverArcade.ttf" id="5_p57ef"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_e0exv"]
@@ -28,7 +28,6 @@ shape = SubResource("WorldBoundaryShape2D_e0exv")
 [node name="Player" parent="." instance=ExtResource("2_lnu2h")]
 position = Vector2(80, 200)
 collision_layer = 1
-slide_collision_layer = 0
 
 [node name="AnimatedSprite2D" parent="Player" index="0"]
 animation = &"idle"

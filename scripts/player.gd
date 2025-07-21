@@ -39,8 +39,12 @@ extends CharacterBody2D
 @export var gravity_scale: float = 1.0
 @export var jump_velocity: float = -400.0
 @export var jump_release_multiplier: float = 0.5
-@export var slide_deceleration: float = 250.0 # Desaceleração rápida enquanto desliza.
-@export_flags_2d_physics var slide_collision_layer: int
+@export var slide_deceleration: float = 150.0 # Desaceleração mais lenta enquanto desliza.
+# Propriedades da colisão durante o deslize.
+@export var slide_collision_shape_height: float = 20.0 # Altura da cápsula ao deslizar
+@export var slide_collision_shape_radius: float = 8.0  # Raio da cápsula ao deslizar
+@export var slide_collision_shape_position: Vector2 = Vector2(0, 8) # Posição da colisão ao deslizar
+@export var slide_sprite_y_offset: float = 14.0 # Deslocamento do sprite para baixo durante o deslize.
 
 var control_enabled = true
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
@@ -52,7 +56,10 @@ var _last_key_direction: int = 0
 var _time_since_last_input: float = 0.0
 var _is_sliding: bool = false
 var _initial_x_position: float
-var _original_collision_layer: int
+var _original_collision_shape_height: float
+var _original_collision_shape_radius: float
+var _original_collision_shape_position: Vector2
+var _original_sprite_position: Vector2
 
 # --- Variáveis de estado da música ---
 enum SpeedTier { STOPPED, WALKING, RUNNING }
@@ -67,6 +74,7 @@ var _soundtrack_timers: Array[Timer] = []
 @onready var slide_ripple_timer: Timer = $SlideRippleTimer
 @onready var audio_stream_player_2d: AudioStreamPlayer2D = $AudioStreamPlayer2D
 @onready var sound_timer: Timer = $SoundTimer
+@onready var collision_shape: CollisionShape2D = $CollisionShape2D
 
 var rng = RandomNumberGenerator.new()
 signal game_over
@@ -74,8 +82,13 @@ signal game_over
 func _ready() -> void:
 	# Armazena a posição inicial do personagem no mundo do jogo.
 	_initial_x_position = global_position.x
-	# Armazena a camada de colisão original do corpo.
-	_original_collision_layer = self.collision_layer
+	
+	# Armazena as propriedades originais da CapsuleShape2D.
+	_original_collision_shape_height = collision_shape.shape.height
+	_original_collision_shape_radius = collision_shape.shape.radius
+	_original_collision_shape_position = collision_shape.position
+	# Armazena a posição original do sprite.
+	_original_sprite_position = animated_sprite.position
 	
 	# Prepara o sistema de música com Timers em vez de sinais 'finished'.
 	_loop_counters.resize(soundtrack_players.size())
@@ -108,7 +121,7 @@ func _physics_process(delta: float) -> void:
 		if is_equal_approx(_current_speed, 0.0):
 			_is_sliding = false
 			slide_ripple_timer.stop() # Para o rastro se a velocidade zerar.
-			self.collision_layer = _original_collision_layer # Reativa a colisão
+			_set_slide_state(false) # Restaura a colisão e o sprite
 	else:
 		_time_since_last_input += delta
 		if _time_since_last_input > input_timeout:
@@ -161,7 +174,7 @@ func _input(event: InputEvent) -> void:
 	# --- LÓGICA DO DESLIZE ---
 	if event.is_action_pressed("slide") and is_on_floor() and _current_speed > 0:
 		_is_sliding = true
-		self.collision_layer = slide_collision_layer # Altera a camada de colisão
+		_set_slide_state(true) # Altera a colisão e o sprite
 		slide_ripple_timer.wait_time = slide_ripple_interval
 		slide_ripple_timer.start()
 		_spawn_ripple() # Cria a primeira ondulação do deslize imediatamente.
@@ -169,7 +182,7 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_released("slide"):
 		if _is_sliding: # Só executa se estava realmente deslizando
 			_is_sliding = false
-			self.collision_layer = _original_collision_layer # Restaura a camada de colisão
+			_set_slide_state(false) # Restaura a colisão e o sprite
 			slide_ripple_timer.stop()
 
 
@@ -311,7 +324,7 @@ func _fade_in(player: AudioStreamPlayer):
 
 	if player.playing and player.volume_db > -1.0:
 		return
-	
+		
 	var tween = create_tween().set_parallel(false)
 	player.volume_db = -80.0
 	player.play()
@@ -333,6 +346,19 @@ func _fade_out(player: AudioStreamPlayer):
 		player.stop()
 
 # --- Funções de Efeitos Visuais ---
+
+# Função centralizada para gerenciar o estado de deslize.
+func _set_slide_state(is_sliding_state: bool):
+	if is_sliding_state:
+		collision_shape.shape.height = slide_collision_shape_height
+		collision_shape.shape.radius = slide_collision_shape_radius
+		collision_shape.position = slide_collision_shape_position
+		animated_sprite.position.y = _original_sprite_position.y + slide_sprite_y_offset
+	else:
+		collision_shape.shape.height = _original_collision_shape_height
+		collision_shape.shape.radius = _original_collision_shape_radius
+		collision_shape.position = _original_collision_shape_position
+		animated_sprite.position = _original_sprite_position
 
 func _spawn_ripple():
 	if ripple_scene:
