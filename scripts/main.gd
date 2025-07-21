@@ -4,6 +4,7 @@ extends Node
 @export var game_scene: PackedScene
 @export var menu_scene: PackedScene
 @export var credits_scene: PackedScene
+@export var controls_scene: PackedScene
 @export var game_over_scene: PackedScene
 
 # Referência a cena que está atualmente na tela
@@ -38,6 +39,8 @@ func change_scene(scene_to_load: PackedScene):
 	
 	if new_scene_instance.has_signal("credits_requested"):
 		new_scene_instance.credits_requested.connect(_on_credits_requested)
+	if new_scene_instance.has_signal("controls_requested"):
+		new_scene_instance.controls_requested.connect(_on_controls_requested)
 	if new_scene_instance.has_signal("menu_requested"):
 		new_scene_instance.menu_requested.connect(_on_main_menu_requested)
 	
@@ -60,3 +63,6 @@ func _on_main_menu_requested():
 
 func _on_credits_requested():
 	change_scene(credits_scene)
+
+func _on_controls_requested():
+	change_scene(controls_scene)

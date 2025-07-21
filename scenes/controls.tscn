@@ -1,9 +1,11 @@
-[gd_scene load_steps=57 format=3 uid="uid://bv1vghbsvynx5"]
+[gd_scene load_steps=59 format=3 uid="uid://jqcu0q0vb0y2"]
 
 [ext_resource type="Texture2D" uid="uid://hlx4lxjohhfy" path="res://assets/UI/ARROWS.png" id="1_ihl6s"]
+[ext_resource type="Script" uid="uid://s0iu34dls2i1" path="res://scripts/controls.gd" id="1_jlst0"]
 [ext_resource type="Texture2D" uid="uid://bl8dld8ejhin1" path="res://assets/UI/JUMP.png" id="2_jlst0"]
 [ext_resource type="Texture2D" uid="uid://bf04rig1qa1kk" path="res://assets/UI/X.png" id="3_dloai"]
 [ext_resource type="Texture2D" uid="uid://dlys73o1i4nmj" path="res://assets/player/PlayerSheet.png" id="4_k6bol"]
+[ext_resource type="FontFile" uid="uid://do4uum7hqbefd" path="res://assets/fonts/DeadRevolverArcade.ttf" id="6_dloai"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a8sje"]
 atlas = ExtResource("1_ihl6s")
@@ -416,7 +418,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Control" type="Control"]
+[node name="Controls" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -426,27 +428,63 @@ offset_bottom = -1.0
 grow_horizontal = 2
 grow_vertical = 2
 rotation = 0.00290356
+script = ExtResource("1_jlst0")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -251.0
+offset_right = -251.0
+grow_horizontal = 2
+scale = Vector2(3.5, 3.5)
+alignment = 1
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="HBoxContainer"]
 position = Vector2(72.142, 48.7907)
+scale = Vector2(1, 1)
 sprite_frames = SubResource("SpriteFrames_1q0lp")
 animation = &"jump"
-frame_progress = 0.624048
+autoplay = "jump"
+frame_progress = 0.525518
 
-[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D3" type="AnimatedSprite2D" parent="HBoxContainer"]
 position = Vector2(128.145, 49.6281)
+scale = Vector2(1, 1)
 sprite_frames = SubResource("SpriteFrames_1q0lp")
 animation = &"slide"
-frame_progress = 0.200069
+autoplay = "slide"
+frame_progress = 0.196104
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="HBoxContainer"]
 position = Vector2(24, 27)
+scale = Vector2(1, 1)
 sprite_frames = SubResource("SpriteFrames_1q0lp")
 animation = &"arrows"
-frame_progress = 0.88777
+autoplay = "arrows"
+frame_progress = 0.124547
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="AnimatedSprite2D2"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="HBoxContainer/AnimatedSprite2D2"]
 position = Vector2(0, 24)
 sprite_frames = SubResource("SpriteFrames_eg8wu")
-frame_progress = 0.857897
+autoplay = "default"
+frame_progress = 0.197658
 metadata/_edit_lock_ = true
+
+[node name="Return" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -64.0
+offset_top = -148.0
+offset_right = 64.0
+offset_bottom = -108.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("6_dloai")
+theme_override_font_sizes/font_size = 32
+text = "Return"

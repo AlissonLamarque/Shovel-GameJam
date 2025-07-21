@@ -46,6 +46,14 @@ theme_override_font_sizes/font_size = 20
 disabled = true
 text = "Start"
 
+[node name="Controls" type="Button" parent="Button_Container"]
+layout_mode = 2
+theme_type_variation = &"FlatButton"
+theme_override_fonts/font = ExtResource("2_bqqt6")
+theme_override_font_sizes/font_size = 20
+disabled = true
+text = "Controls"
+
 [node name="Credits" type="Button" parent="Button_Container"]
 layout_mode = 2
 theme_type_variation = &"FlatButton"
@@ -55,15 +63,14 @@ disabled = true
 text = "Credits
 "
 
-[node name="Quit" type="Button" parent="Button_Container"]
-layout_mode = 2
-theme_type_variation = &"FlatButton"
-theme_override_fonts/font = ExtResource("2_bqqt6")
-theme_override_font_sizes/font_size = 20
-disabled = true
-text = "Quit"
-
 [node name="Cutscene_Opening" parent="." instance=ExtResource("2_ekxnf")]
+
+[node name="Player" parent="Cutscene_Opening" index="2"]
+constant_deceleration = 100.0
+input_timeout = 0.4
+jump_velocity = -400.0
+slide_deceleration = 150.0
+slide_sprite_y_offset = 14.0
 
 [editable path="Cutscene_Opening"]
 [editable path="Cutscene_Opening/Player"]
