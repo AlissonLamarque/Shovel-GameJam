@@ -69,7 +69,7 @@ var _soundtrack_timers: Array[Timer] = []
 @onready var sound_timer: Timer = $SoundTimer
 
 var rng = RandomNumberGenerator.new()
-
+signal game_over
 
 func _ready() -> void:
 	# Armazena a posição inicial do personagem no mundo do jogo.
@@ -352,3 +352,8 @@ func _on_step_timer_timeout():
 
 func _on_slide_ripple_timer_timeout():
 	_spawn_ripple()
+
+func die():
+	control_enabled = false
+	game_over.emit()
+	velocity = Vector2.ZERO
